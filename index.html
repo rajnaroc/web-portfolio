@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aarón Campos — Full-Stack Developer & Security Analyst</title>
+
+<meta name="description" content="Vicente Aarón Campos Marín — Desarrollador Full-Stack y futuro analista de ciberseguridad en Valencia. Formación dual DAW + Ciberseguridad (720h). Disponibilidad inmediata.">
+<meta name="theme-color" content="#0A0D13">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Aarón Campos — Full-Stack Developer & Security Analyst">
+<meta property="og:description" content="Desarrollador Full-Stack y futuro analista de ciberseguridad en Valencia. Formación dual DAW + Ciberseguridad (720h). Disponibilidad inmediata.">
+<meta property="og:image" content="aaron.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Aarón Campos — Full-Stack Developer & Security Analyst">
+<meta name="twitter:description" content="Desarrollador Full-Stack y futuro analista de ciberseguridad en Valencia. Formación dual DAW + Ciberseguridad (720h). Disponibilidad inmediata.">
+<meta name="twitter:image" content="aaron.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -79,7 +93,7 @@
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
 
   .navlinks{display:flex;gap:28px;font-family:var(--mono);font-size:13px;color:var(--text-dim);}
-  .navlinks a{transition:color .2s;position:relative;}
+  .navlinks a{transition:color .2s;position:relative;text-transform:capitalize;}
   .navlinks a:hover, .navlinks a:focus-visible{color:var(--accent);}
   .navlinks a::before{content:'~/';color:var(--text-faint);}
   .navlinks a::after{
@@ -105,7 +119,7 @@
   @media (max-width:380px){ .logo-rest{display:none;} }
 
   .nav-toggle{display:none;background:none;border:1px solid var(--border-bright);color:var(--text);
-    font-family:var(--mono);padding:6px 10px;border-radius:var(--radius);cursor:pointer;}
+    font-family:var(--mono);padding:6px 10px;border-radius:var(--radius);cursor:pointer;text-transform:capitalize;}
 
   @media (max-width:720px){
     .navlinks{position:fixed;top:64px;left:0;right:0;background:var(--bg-elevated);
@@ -164,6 +178,11 @@
   .btn-primary:hover{background:#ffc57a;transform:translateY(-1px);}
   .btn-ghost{color:var(--text);}
   .btn-ghost:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  .btn-cv-dev{color:var(--accent);border-color:var(--accent-dim);}
+  .btn-cv-dev:hover{background:var(--accent);color:#0A0D13;border-color:var(--accent);transform:translateY(-1px);}
+  .btn-cv-sec{color:var(--accent2);border-color:var(--accent2-dim);}
+  .btn-cv-sec:hover{background:var(--accent2);color:#0A0D13;border-color:var(--accent2);transform:translateY(-1px);}
 
 .hero-grid{display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center;}
   @media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
@@ -311,6 +330,22 @@
   footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;
     font-family:var(--mono);font-size:12px;color:var(--text-faint);}
 
+  /* ---------- scroll progress bar ---------- */
+  .scroll-progress{
+    position:fixed;top:0;left:0;height:3px;width:0%;z-index:200;
+    background:linear-gradient(90deg, var(--accent2), var(--accent));
+    box-shadow:0 0 8px var(--accent2);
+    transition:width .1s linear;
+  }
+
+  /* ---------- section change pulse ---------- */
+  @keyframes sectionPulse{
+    0%{box-shadow:inset 0 0 0 0 rgba(94,234,212,0);}
+    25%{box-shadow:inset 0 3px 0 0 var(--accent2);}
+    100%{box-shadow:inset 0 3px 0 0 rgba(94,234,212,0);}
+  }
+  .section-pulse{animation:sectionPulse 1.1s ease;}
+
   @media (prefers-reduced-motion: reduce){
     *{animation:none !important;transition:none !important;}
     html{scroll-behavior:auto;}
@@ -322,6 +357,7 @@
 <body>
 
 <div class="bg-grid"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <header>
   <nav class="wrap">
@@ -357,6 +393,8 @@
     </p>
     <div class="cta-row">
       <a href="#proyectos" class="btn btn-primary">Ver proyectos →</a>
+      <a href="cv-web.pdf" download="Aaron_Campos_CV_Desarrollo.pdf" class="btn btn-cv-dev">CV Desarrollo ↓</a>
+      <a href="cv-ciber.pdf" download="Aaron_Campos_CV_Ciberseguridad.pdf" class="btn btn-cv-sec">CV Ciberseguridad ↓</a>
       <a href="#contacto" class="btn btn-ghost">Contactar</a>
     </div>
 
@@ -793,14 +831,33 @@
     navTargets.forEach((_, section)=>spyIo.observe(section));
   }
 
-  // mobile nav
+  // scroll progress bar
+  const scrollProgress = document.getElementById('scrollProgress');
+  function updateScrollProgress(){
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+    scrollProgress.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateScrollProgress, {passive:true});
+  window.addEventListener('resize', updateScrollProgress);
+  updateScrollProgress();
+
+  // mobile nav + section pulse on nav click
   const navToggle = document.getElementById('navToggle');
   const navlinks = document.getElementById('navlinks');
   navToggle.addEventListener('click', ()=>{
     navlinks.classList.toggle('open');
   });
   navlinks.querySelectorAll('a').forEach(a=>{
-    a.addEventListener('click', ()=> navlinks.classList.remove('open'));
+    a.addEventListener('click', ()=>{
+      navlinks.classList.remove('open');
+      const target = document.querySelector(a.getAttribute('href'));
+      if(target){
+        target.classList.remove('section-pulse');
+        void target.offsetWidth;
+        target.classList.add('section-pulse');
+      }
+    });
   });
 </script>
 
