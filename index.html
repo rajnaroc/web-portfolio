@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aarón Campos — Full-Stack Developer & Security Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0D13;
+    --bg-elevated: #11151E;
+    --bg-card: #141924;
+    --border: #212938;
+    --border-bright: #33415A;
+    --text: #E7EAF0;
+    --text-dim: #8A93A6;
+    --text-faint: #545F72;
+    --accent: #FFB454;      /* terminal amber — dev signal */
+    --accent-dim: #8A6A38;
+    --accent2: #5EEAD4;     /* network teal — security signal */
+    --accent2-dim: #2E6F67;
+    --danger: #FF6B6B;
+    --radius: 3px;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+    min-width:280px;
+    overflow-wrap:break-word;
+  }
+
+  a{color:inherit;text-decoration:none;}
+
+  img{max-width:100%;display:block;}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 clamp(18px, 5vw, 32px);}
+
+  /* ---------- background grid texture ---------- */
+  .bg-grid{
+    position:fixed;inset:0;z-index:-2;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.25;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 90%);
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(10,13,19,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:64px;
+  }
+  .logo{
+    font-family:var(--mono);font-weight:600;font-size:15px;
+    color:var(--text);
+    display:flex;align-items:center;gap:8px;
+  }
+  .logo .dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);
+    box-shadow:0 0 8px var(--accent2);animation:pulse 2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+  .navlinks{display:flex;gap:28px;font-family:var(--mono);font-size:13px;color:var(--text-dim);}
+  .navlinks a{transition:color .2s;position:relative;}
+  .navlinks a:hover, .navlinks a:focus-visible{color:var(--accent);}
+  .navlinks a::before{content:'~/';color:var(--text-faint);}
+  .navlinks a::after{
+    content:'';position:absolute;left:14px;right:0;bottom:-3px;height:1px;
+    background:var(--accent2);transform:scaleX(0);transform-origin:left;
+    transition:transform .3s ease;
+  }
+  .navlinks a:hover::after{transform:scaleX(1);}
+  .navlinks a.active{color:var(--accent2);}
+  .navlinks a.active::after{transform:scaleX(1);background:var(--accent2);}
+
+  .nav-right{display:flex;align-items:center;gap:16px;}
+
+  .gh-link{
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:13px;color:var(--text-dim);
+    border:1px solid var(--border-bright);padding:7px 12px;border-radius:var(--radius);
+    transition:all .2s;
+  }
+  .gh-link:hover, .gh-link:focus-visible{color:var(--accent2);border-color:var(--accent2);}
+  .gh-link svg{flex-shrink:0;}
+  @media (max-width:480px){ .gh-link span{display:none;} }
+  @media (max-width:380px){ .logo-rest{display:none;} }
+
+  .nav-toggle{display:none;background:none;border:1px solid var(--border-bright);color:var(--text);
+    font-family:var(--mono);padding:6px 10px;border-radius:var(--radius);cursor:pointer;}
+
+  @media (max-width:720px){
+    .navlinks{position:fixed;top:64px;left:0;right:0;background:var(--bg-elevated);
+      flex-direction:column;gap:0;border-bottom:1px solid var(--border);
+      max-height:0;overflow:hidden;transition:max-height .3s ease;}
+    .navlinks.open{max-height:300px;}
+    .navlinks a{padding:16px 32px;border-top:1px solid var(--border);}
+    .nav-toggle{display:block;}
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding-top:64px;position:relative;
+    padding-bottom:48px;
+  }
+  .eyebrow{
+    font-family:var(--mono);font-size:13px;color:var(--accent2);
+    display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:24px;
+  }
+  .eyebrow .bracket{color:var(--text-faint);}
+
+  h1{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:clamp(32px, 6vw, 64px);
+    line-height:1.1;
+    letter-spacing:-0.02em;
+    margin-bottom:20px;
+  }
+  h1 span{color:var(--accent);}
+
+  .role-line{
+    font-family:var(--mono);
+    font-size:clamp(16px, 2.4vw, 22px);
+    color:var(--text-dim);
+    margin-bottom:28px;
+    min-height:1.6em;
+  }
+  .role-line .cursor{color:var(--accent2);animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .hero-desc{max-width:560px;color:var(--text-dim);font-size:16px;margin-bottom:40px;}
+
+  .cta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:64px;}
+  .btn{
+    font-family:var(--mono);font-size:14px;font-weight:500;
+    padding:13px 24px;border-radius:var(--radius);
+    border:1px solid var(--border-bright);
+    display:inline-flex;align-items:center;gap:8px;
+    transition:all .2s;
+  }
+  .btn-primary{background:var(--accent);color:#0A0D13;border-color:var(--accent);}
+  .btn-primary:hover{background:#ffc57a;transform:translateY(-1px);}
+  .btn-ghost{color:var(--text);}
+  .btn-ghost:hover{border-color:var(--accent2);color:var(--accent2);}
+
+.hero-grid{display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center;}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+
+  .avatar-frame{
+    position:relative;width:220px;height:220px;justify-self:center;
+    border:1px solid var(--border-bright);border-radius:6px;padding:6px;
+    background:var(--bg-card);
+  }
+  .avatar-frame img{
+    width:100%;height:100%;object-fit:cover;border-radius:3px;
+    filter:grayscale(35%) contrast(1.05);
+  }
+  .avatar-tag{
+    position:absolute;bottom:-11px;left:50%;transform:translateX(-50%);
+    background:var(--bg);border:1px solid var(--accent2-dim);color:var(--accent2);
+    font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;
+    white-space:nowrap;
+  }
+  @media(max-width:900px){.avatar-frame{width:160px;height:160px;}}
+  .terminal{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:6px;
+    max-width:560px;
+    overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .terminal-bar{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 14px;background:var(--bg-elevated);
+    border-bottom:1px solid var(--border);
+  }
+  .terminal-bar span:not(.title){width:10px;height:10px;border-radius:50%;background:var(--border-bright);flex-shrink:0;}
+  .terminal-bar .title{font-family:var(--mono);font-size:12px;color:var(--text-faint);margin-left:16px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+  .terminal-body{padding:18px 20px;font-family:var(--mono);font-size:13px;color:var(--text-dim);
+    overflow-wrap:break-word;}
+  .terminal-body .line{margin-bottom:6px;}
+  .terminal-body .prompt{color:var(--accent2);}
+  .terminal-body .out-key{color:var(--accent);}
+  .terminal-body .ok{color:var(--accent2);}
+
+  /* ---------- section shared ---------- */
+  section{padding:clamp(56px, 12vw, 100px) 0;border-top:1px solid var(--border);scroll-margin-top:80px;}
+  .section-head{margin-bottom:56px;}
+  .section-tag{font-family:var(--mono);font-size:13px;color:var(--accent2);margin-bottom:12px;
+    display:flex;align-items:center;gap:10px;}
+  .section-tag::before{content:'';width:0;height:1px;background:var(--accent2);
+    transition:width .5s ease .2s;}
+  .reveal.in .section-tag::before{width:24px;}
+  .section-title{font-family:var(--mono);font-weight:700;font-size:clamp(24px,4vw,36px);}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,.8,.3,1), transform .7s cubic-bezier(.16,.8,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* staggered entrance for list-like groups (cards, rows, chips) */
+  .stagger > *{opacity:0;transform:translateY(16px);
+    transition:opacity .5s ease, transform .5s ease;}
+  .stagger.in > *{opacity:1;transform:translateY(0);}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:56px;}
+  @media(max-width:800px){.about-grid{grid-template-columns:1fr;}}
+  .about-text p{color:var(--text-dim);margin-bottom:18px;font-size:15.5px;}
+  .about-text strong{color:var(--text);font-weight:600;}
+
+  .facts{border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .fact{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 16px;padding:14px 18px;
+    border-bottom:1px solid var(--border);font-family:var(--mono);font-size:13px;}
+  .fact:last-child{border-bottom:none;}
+  .fact .k{color:var(--text-faint);flex-shrink:0;}
+  .fact .v{color:var(--text);text-align:right;}
+  @media(max-width:380px){
+    .fact{flex-direction:column;gap:2px;}
+    .fact .v{text-align:left;}
+  }
+
+  /* ---------- skills ---------- */
+  .track-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:720px){.track-grid{grid-template-columns:1fr;}}
+  .track{border:1px solid var(--border);border-radius:6px;background:var(--bg-card);padding:28px;}
+  .track-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+  .track-head .icon{width:10px;height:10px;border-radius:2px;}
+  .track.dev .icon{background:var(--accent);}
+  .track.sec .icon{background:var(--accent2);}
+  .track-head h3{font-family:var(--mono);font-size:15px;letter-spacing:0.02em;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{font-family:var(--mono);font-size:12px;padding:6px 10px;border-radius:var(--radius);
+    border:1px solid var(--border-bright);color:var(--text-dim);}
+  .track.dev .chip:hover{border-color:var(--accent);color:var(--accent);}
+  .track.sec .chip:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  /* ---------- project group headings ---------- */
+  .projects-heading{display:flex;align-items:center;gap:10px;margin:0 0 20px;}
+  .projects-group + .projects-group{margin-top:48px;}
+  .projects-heading .icon{width:10px;height:10px;border-radius:2px;}
+  .projects-heading .icon.dev{background:var(--accent);}
+  .projects-heading .icon.sec{background:var(--accent2);}
+  .projects-heading h3{font-family:var(--mono);font-size:15px;letter-spacing:0.02em;}
+
+  /* ---------- projects ---------- */
+  .projects{display:flex;flex-direction:column;gap:20px;}
+  .project{
+    border:1px solid var(--border);border-radius:6px;background:var(--bg-card);
+    padding:clamp(20px, 4vw, 32px);display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start;
+    transition:border-color .2s;
+  }
+  .project:hover{border-color:var(--border-bright);}
+  @media(max-width:720px){.project{grid-template-columns:1fr;}}
+  .project-link{justify-self:start;}
+  @media(max-width:720px){.project-link{justify-self:stretch;text-align:center;}}
+  .project-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+  .project-title{font-family:var(--mono);font-size:18px;font-weight:600;}
+  .project-status{font-family:var(--mono);font-size:11px;padding:3px 8px;border-radius:20px;
+    border:1px solid var(--accent2-dim);color:var(--accent2);}
+  .project-status.done{border-color:var(--border-bright);color:var(--text-faint);}
+  .project-desc{color:var(--text-dim);font-size:14.5px;margin-bottom:14px;max-width:600px;}
+  .project-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{font-family:var(--mono);font-size:11px;color:var(--text-faint);
+    border:1px solid var(--border);padding:3px 8px;border-radius:var(--radius);}
+  .project-link{font-family:var(--mono);font-size:13px;color:var(--accent);white-space:nowrap;
+    border:1px solid var(--accent-dim);padding:9px 16px;border-radius:var(--radius);align-self:start;}
+  .project-link:hover{background:var(--accent);color:#0A0D13;}
+
+  /* ---------- timeline ---------- */
+  .timeline{position:relative;padding-left:28px;}
+  .timeline::before{content:'';position:absolute;left:4px;top:6px;bottom:6px;width:1px;background:var(--border-bright);}
+  .tl-item{position:relative;padding-bottom:36px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{content:'';position:absolute;left:-28px;top:4px;width:9px;height:9px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--accent2);}
+  .tl-date{font-family:var(--mono);font-size:12px;color:var(--text-faint);margin-bottom:4px;}
+  .tl-title{font-weight:600;font-size:16px;margin-bottom:4px;}
+  .tl-org{font-size:14px;color:var(--text-dim);}
+
+  /* ---------- contact ---------- */
+  .contact{text-align:center;}
+  .contact .section-tag{justify-content:center;}
+  .contact .section-tag::before{display:none;}
+  .contact-title{font-family:var(--mono);font-weight:700;font-size:clamp(26px,5vw,44px);margin-bottom:20px;}
+  .contact-desc{color:var(--text-dim);max-width:480px;margin:0 auto 36px;}
+  .contact-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
+
+  footer{border-top:1px solid var(--border);padding:32px 0;text-align:center;
+    font-family:var(--mono);font-size:12px;color:var(--text-faint);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+    html{scroll-behavior:auto;}
+  }
+
+  :focus-visible{outline:2px solid var(--accent2);outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span class="dot"></span><span class="logo-rest">rajnaroc@portfolio</span></div>
+    <div class="navlinks" id="navlinks">
+      <a href="#inicio">inicio</a>
+      <a href="#skills">skills</a>
+      <a href="#proyectos">proyectos</a>
+      <a href="#experiencia">experiencia</a>
+      <a href="#contacto">contacto</a>
+    </div>
+    <div class="nav-right">
+      <a href="https://github.com/rajnaroc" target="_blank" rel="noopener" class="gh-link" aria-label="GitHub de Aarón Campos">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.09 0 4.42-2.7 5.39-5.26 5.68.41.36.78 1.08.78 2.17 0 1.57-.01 2.83-.01 3.22 0 .31.21.68.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+        </svg>
+        <span>rajnaroc</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">menu</button>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="wrap">
+    <div class="eyebrow"><span class="bracket">[</span>Valencia, España · disponibilidad total<span class="bracket">]</span></div>
+    <h1>Vicente Aarón<br><span>Campos Marín</span></h1>
+    <div class="role-line"><span id="roleText"></span><span class="cursor">_</span></div>
+    <p class="hero-desc">
+      Formación dual en Desarrollo de Aplicaciones Web y Ciberseguridad (720h). Diseño y despliego
+      aplicaciones full-stack de principio a fin, y sé cómo se comprometen los sistemas — una
+      perspectiva que aplico tanto para construir software como para defenderlo.
+    </p>
+    <div class="cta-row">
+      <a href="#proyectos" class="btn btn-primary">Ver proyectos →</a>
+      <a href="#contacto" class="btn btn-ghost">Contactar</a>
+    </div>
+
+    <div class="hero-grid">
+      <div class="terminal reveal" id="termReveal">
+        <div class="terminal-bar">
+          <span></span><span></span><span></span>
+          <span class="title">rajnaroc@valencia: ~</span>
+        </div>
+        <div class="terminal-body">
+          <div class="line"><span class="prompt">$</span> whoami</div>
+          <div class="line">analista_ciberseguridad_junior / full-stack_developer</div>
+          <div class="line"><span class="prompt">$</span> cat stack.txt</div>
+          <div class="line">frontend: <span class="out-key">Vue.js · Tailwind · JavaScript</span></div>
+          <div class="line">backend:  <span class="out-key">Python/Flask · MySQL · MongoDB</span></div>
+          <div class="line">security: <span class="out-key">Wazuh · Suricata · pfSense · SIEM</span></div>
+          <div class="line"><span class="prompt">$</span> status --check</div>
+          <div class="line"><span class="ok">✓</span> disponible para incorporación inmediata</div>
+        </div>
+      </div>
+
+      <div class="avatar-frame reveal">
+        <img src="aaron.png" alt="Foto de Vicente Aarón Campos Marín">
+        <span class="avatar-tag">aaron.png</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap about-grid reveal">
+    <div class="about-text">
+      <div class="section-tag">01 · Sobre mí</div>
+      <h2 class="section-title" style="margin-bottom:24px;">De construir aplicaciones a asegurarlas</h2>
+      <p>
+        Empecé formándome en <strong>Desarrollo de Aplicaciones Web</strong>, aprendiendo a levantar
+        sistemas completos de principio a fin: front, back, base de datos y despliegue. Ese mismo interés
+        por entender "cómo funciona por dentro" me llevó a especializarme en <strong>Ciberseguridad</strong>,
+        donde profundicé en seguridad defensiva, monitorización con SIEM, análisis forense y hardening
+        de sistemas.
+      </p>
+      <p>
+        Hoy busco incorporarme como <strong>analista junior en un SOC o equipo de seguridad</strong>,
+        aportando también la mirada de quien ha construido el software que ahora sabe proteger.
+      </p>
+    </div>
+    <div class="facts stagger">
+      <div class="fact"><span class="k">Formación</span><span class="v">DAW + Ciberseguridad (720h)</span></div>
+      <div class="fact"><span class="k">Ubicación</span><span class="v">Valencia, España</span></div>
+      <div class="fact"><span class="k">Idiomas</span><span class="v">Castellano/Valenciano · Inglés B2</span></div>
+      <div class="fact"><span class="k">Certificaciones</span><span class="v">TryHackMe (perfil activo)</span></div>
+      <div class="fact"><span class="k">Normativas</span><span class="v">ENS · ISO 27001 · NIST · CIS</span></div>
+      <div class="fact"><span class="k">GitHub</span><span class="v">github.com/rajnaroc</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">02 · Skills</div>
+      <h2 class="section-title">Dos pistas, una base</h2>
+    </div>
+    <div class="track-grid reveal">
+      <div class="track dev">
+        <div class="track-head"><span class="icon"></span><h3>DESARROLLO</h3></div>
+        <div class="chips stagger">
+          <span class="chip">Python / Flask</span>
+          <span class="chip">JavaScript</span>
+          <span class="chip">Vue.js</span>
+          <span class="chip">HTML5 / CSS3 / Sass</span>
+          <span class="chip">Tailwind CSS</span>
+          <span class="chip">MySQL</span>
+          <span class="chip">MongoDB · SQLite</span>
+          <span class="chip">Figma</span>
+          <span class="chip">Docker · Nginx · Gunicorn</span>
+          <span class="chip">Git / GitHub</span>
+          <span class="chip">Chart.js / Recharts</span>
+          <span class="chip">DataTables</span>
+          <span class="chip">Cron</span>
+          <span class="chip">APIs REST</span>
+          <span class="chip">Apache</span>
+        </div>
+      </div>
+      <div class="track sec">
+        <div class="track-head"><span class="icon"></span><h3>CIBERSEGURIDAD</h3></div>
+        <div class="chips stagger">
+          <span class="chip">Wazuh · Suricata · SIEM</span>
+          <span class="chip">Wireshark</span>
+          <span class="chip">Autopsy (forense)</span>
+          <span class="chip">pfSense · MikroTik</span>
+          <span class="chip">VLANs · ACLs · VPN · PKI</span>
+          <span class="chip">Lynis · AppArmor · CIS Benchmarks</span>
+          <span class="chip">NIST SP 800-53</span>
+          <span class="chip">Active Directory · WSUS</span>
+          <span class="chip">OWASP Top 10</span>
+          <span class="chip">Python · PowerShell · Bash</span>
+          <span class="chip">AWS EC2</span>
+          <span class="chip">Easy-RSA</span>
+          <span class="chip">Squid (proxy) · SSL Bump</span>
+          <span class="chip">iptables</span>
+          <span class="chip">Dude (monitorización)</span>
+          <span class="chip">Mitigación DoS/DDoS</span>
+          <span class="chip">Diseño y gestión de redes</span>
+          <span class="chip">Hardening · DevSecOps</span>
+          <span class="chip">RGPD · ISO 27001</span>
+          <span class="chip">Gestión y escaneo de vulnerabilidades</span>
+          <span class="chip">Análisis forense digital</span>
+          <span class="chip">MITRE ATT&amp;CK · Threat Hunting</span>
+          <span class="chip">Nmap · Burp Suite · Caido</span>
+          <span class="chip">Metasploit · Pentesting · Hacking ético</span>
+          <span class="chip">GNS3</span>
+          <span class="chip">Windows Server · Linux</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="proyectos">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">03 · Proyectos</div>
+      <h2 class="section-title">Trabajo real, no ejercicios de clase</h2>
+    </div>
+    <div class="projects-group reveal">
+      <div class="projects-heading"><span class="icon dev"></span><h3>DESARROLLO WEB</h3></div>
+      <div class="projects stagger">
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">OPTCGod — Gestor de Cartas One Piece TCG</span>
+            <span class="project-status">En producción</span>
+          </div>
+          <p class="project-desc">
+            Aplicación web full-stack para coleccionistas y jugadores del One Piece Trading Card Game,
+            desarrollada junto a Rubén García Fernández-Bravo. Permite gestionar colecciones de cartas,
+            construir mazos con validación de reglas, registrar intercambios entre jugadores y visualizar
+            estadísticas mediante gráficos. Incluye buscador avanzado con filtros por color, coste, tipo y
+            líder, exportación/importación de mazos en formato OPTCG/DeckList, y un sistema propio de
+            scraping y sincronización (Python + PyMongo) para mantener actualizados precios, cartas e
+            imágenes desde fuentes externas de forma automática, idempotente y programable vía cron.
+            Desplegada en VPS con gestión de entorno virtual y variables de entorno para las credenciales.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Python/Flask</span><span class="tag">MongoDB</span>
+            <span class="tag">Tailwind CSS</span><span class="tag">JavaScript</span>
+            <span class="tag">Chart.js/Recharts</span><span class="tag">PyMongo</span>
+            <span class="tag">Cron</span>
+          </div>
+        </div>
+        <a href="https://optcgod.com/" target="_blank" rel="noopener" class="project-link">Ver sitio →</a>
+      </div>
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">Locke Royale</span>
+            <span class="project-status">En producción</span>
+          </div>
+          <p class="project-desc">
+            Aplicación web full-stack para competiciones grupales de Nuzlocke Pokémon, con ranking en tiempo
+            real mediante polling API, mapa interactivo con más de 60 zonas, Pokédex integrada con PokeAPI,
+            sistema de torneos por eliminación y autenticación segura (OWASP Top 10, CSRF, rate limiting).
+          </p>
+          <div class="project-tags">
+            <span class="tag">Python/Flask</span><span class="tag">SQLite</span>
+            <span class="tag">JavaScript Vanilla</span><span class="tag">Nginx</span><span class="tag">Gunicorn</span>
+          </div>
+        </div>
+        <a href="https://locke-royale.optcgod.com" target="_blank" rel="noopener" class="project-link">Ver sitio →</a>
+      </div>
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">Sistema de Facturación Web</span>
+            <span class="project-status">En producción · uso privado (ORDÉA Cleaning)</span>
+          </div>
+          <p class="project-desc">
+            Desarrollo completo de una aplicación web de gestión de facturación para una empresa de servicios
+            de limpieza. Permite crear presupuestos y facturas con generación de PDF, convertir presupuestos
+            en facturas, gestionar clientes y visualizar estadísticas de facturación anuales con gráficos.
+            Autenticación de usuarios con roles (admin/usuario), protección CSRF y rate limiting en el login.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Python/Flask</span><span class="tag">MySQL (cloud)</span>
+            <span class="tag">ReportLab</span><span class="tag">CSRF · rate limiting</span>
+            <span class="tag">HTML/CSS/JS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">Valencars</span>
+            <span class="project-status done">prácticas · Valencars</span>
+          </div>
+          <p class="project-desc">
+            Desarrollo del sitio web de un concesionario de automóviles, desde la maquetación hasta la
+            puesta en marcha, trabajando junto al cliente para definir requisitos y estructurar el
+            catálogo de vehículos.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Python/Flask</span><span class="tag">HTML5</span>
+            <span class="tag">CSS</span><span class="tag">JavaScript Vanilla</span>
+            <span class="tag">DataTables</span>
+          </div>
+        </div>
+        <a href="https://www.valencars.net/" target="_blank" rel="noopener" class="project-link">Ver sitio →</a>
+      </div>
+
+      </div>
+    </div>
+
+    <div class="projects-group reveal">
+      <div class="projects-heading"><span class="icon sec"></span><h3>CIBERSEGURIDAD</h3></div>
+      <div class="projects stagger">
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">Fortificación de red perimetral con MikroTik y monitorización con Dude</span>
+            <span class="project-status done">IES Camp de Morvedre</span>
+          </div>
+          <p class="project-desc">
+            Fortificación del firewall/router MikroTik backend de una red segmentada (WAN, DMZ con servidor
+            web, red IT) aplicando controles de CIS Controls 7.1 y NIST SP 800-53: control de puertos y
+            servicios, VLAN de gestión dedicada y certificado digital propio para el acceso https al
+            dispositivo. Despliegue y configuración del servicio de monitorización Dude (cliente/servidor)
+            con alertas a Telegram por CPU y caída de servicio, y análisis de logs del firewall para
+            identificar comportamientos anómalos. Simulación de ataques DoS/SYN flood contra el servidor web
+            de la DMZ y aplicación de contramedidas para mitigarlos.
+          </p>
+          <div class="project-tags">
+            <span class="tag">MikroTik RouterOS</span><span class="tag">CIS Controls</span>
+            <span class="tag">NIST SP 800-53</span><span class="tag">Dude</span>
+            <span class="tag">DoS/DDoS · SYN Flood</span><span class="tag">Análisis de logs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">Proxy transparente con Squid y monitorización con Wazuh</span>
+            <span class="project-status done">IES Camp de Morvedre</span>
+          </div>
+          <p class="project-desc">
+            Diseño e implementación de un proxy transparente con Squid para controlar, filtrar y supervisar
+            el tráfico HTTP/HTTPS de una red. Configuración de caché en RAM y disco, políticas de ACLs
+            (whitelist, blacklist de seguridad y blocklist de productividad) y restricción de acceso por
+            horario laboral. Intercepción transparente mediante reglas NAT/Mangle en un firewall MikroTik y
+            reglas iptables en el servidor Squid, con inspección de tráfico HTTPS mediante SSL Bump y
+            certificado de CA propio. Integración con un agente Wazuh para centralizar y analizar los logs
+            de acceso (tráfico permitido, denegado y servido desde caché), incluyendo un análisis de las
+            limitaciones de visibilidad sobre HTTPS (SNI, ECH, DoH) y las mejoras propuestas.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Squid (proxy transparente)</span><span class="tag">Wazuh</span>
+            <span class="tag">MikroTik NAT/Mangle</span><span class="tag">iptables</span>
+            <span class="tag">SSL Bump</span><span class="tag">ACLs</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="project">
+        <div>
+          <div class="project-head">
+            <span class="project-title">Sistema de certificados (PKI) con Easy-RSA</span>
+            <span class="project-status done">IES Camp de Morvedre</span>
+          </div>
+          <p class="project-desc">
+            Implementación de una Autoridad Certificadora Raíz (CA Raíz) para una organización, desplegada en
+            un servidor Ubuntu Server sobre AWS EC2 y gestionada con Easy-RSA: configuración del archivo
+            <code>vars</code>, generación del certificado raíz y exportación segura mediante SCP. Proyecto
+            en equipo de cuatro personas dentro del módulo de Bastionado de Redes.
+          </p>
+          <div class="project-tags">
+            <span class="tag">PKI / Easy-RSA</span><span class="tag">AWS EC2</span>
+            <span class="tag">Ubuntu Server</span><span class="tag">SCP</span>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experiencia">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="section-tag">04 · Experiencia y formación</div>
+      <h2 class="section-title">Recorrido</h2>
+    </div>
+    <div class="timeline reveal stagger">
+      <div class="tl-item">
+        <div class="tl-date">Sep 2023 — Jun 2025</div>
+        <div class="tl-title">Desarrollo de Aplicaciones Web (Grado Superior)</div>
+        <div class="tl-org">Grupo Studio Formación</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Mar 2025 — Jun 2025</div>
+        <div class="tl-title">Prácticas — Desarrollo Web</div>
+        <div class="tl-org">Valencars</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Oct 2025 — Jun 2026</div>
+        <div class="tl-title">Ciberseguridad en Entornos de las TI (720h)</div>
+        <div class="tl-org">IES Camp de Morvedre · seguridad defensiva, SIEM, forense, hardening</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Mar 2026 — Ago 2026</div>
+        <div class="tl-title">OPTCGod — proyecto full-stack en equipo</div>
+        <div class="tl-org">Desarrollo y despliegue en producción sobre VPS · con Rubén García Fernández-Bravo</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Jun 2026</div>
+        <div class="tl-title">Locke Royale — proyecto personal full-stack</div>
+        <div class="tl-org">Desarrollo y despliegue en producción sobre VPS</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Jul 2026</div>
+        <div class="tl-title">Sistema de facturación web — freelance</div>
+        <div class="tl-org">ORDÉA Cleaning</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto" class="contact">
+  <div class="wrap reveal">
+    <div class="section-tag">05 · Contacto</div>
+    <h2 class="contact-title">Hablemos</h2>
+    <p class="contact-desc">
+      Disponibilidad total. Abierto a incorporarme como analista junior en ciberseguridad o a proyectos
+      de desarrollo full-stack.
+    </p>
+    <div class="contact-links">
+      <a href="mailto:aaroncm611@gmail.com" class="btn btn-primary">aaroncm611@gmail.com</a>
+      <a href="https://github.com/rajnaroc" target="_blank" rel="noopener" class="btn btn-ghost">GitHub</a>
+      <a href="https://linkedin.com/in/aaron-campos" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Vicente Aarón Campos Marín · construido con HTML, CSS y JS puro
+</footer>
+
+<script>
+  // role typing effect
+  const roles = [
+    "Full-Stack Developer",
+    "Analista de Ciberseguridad (Junior)",
+    "Blue Team enthusiast"
+  ];
+  const el = document.getElementById('roleText');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (reduceMotion) {
+    el.textContent = roles[0];
+  } else {
+    let ri = 0, ci = 0, deleting = false;
+    function tick(){
+      const word = roles[ri];
+      if(!deleting){
+        ci++;
+        el.textContent = word.slice(0, ci);
+        if(ci === word.length){ deleting = true; setTimeout(tick, 1400); return; }
+      } else {
+        ci--;
+        el.textContent = word.slice(0, ci);
+        if(ci === 0){ deleting = false; ri = (ri+1) % roles.length; }
+      }
+      setTimeout(tick, deleting ? 35 : 65);
+    }
+    tick();
+  }
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduceMotion){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.15});
+    revealEls.forEach(el=>io.observe(el));
+  } else {
+    revealEls.forEach(el=>el.classList.add('in'));
+  }
+
+  // staggered entrance for cards/rows/chips inside a section
+  const staggerEls = document.querySelectorAll('.stagger');
+  if('IntersectionObserver' in window && !reduceMotion){
+    const staggerIo = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          Array.from(e.target.children).forEach((child, i)=>{
+            child.style.transitionDelay = `${Math.min(i * 55, 500)}ms`;
+          });
+          e.target.classList.add('in');
+          staggerIo.unobserve(e.target);
+        }
+      });
+    }, {threshold:0.1});
+    staggerEls.forEach(el=>staggerIo.observe(el));
+  } else {
+    staggerEls.forEach(el=>el.classList.add('in'));
+  }
+
+  // active section highlight in nav while scrolling
+  const navlinkEls = document.querySelectorAll('#navlinks a[href^="#"]');
+  const navTargets = new Map();
+  navlinkEls.forEach(a=>{
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) navTargets.set(target, a);
+  });
+  if('IntersectionObserver' in window && navTargets.size){
+    const spyIo = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{
+        const link = navTargets.get(e.target);
+        if(!link) return;
+        if(e.isIntersecting){
+          navlinkEls.forEach(a=>a.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px', threshold:0});
+    navTargets.forEach((_, section)=>spyIo.observe(section));
+  }
+
+  // mobile nav
+  const navToggle = document.getElementById('navToggle');
+  const navlinks = document.getElementById('navlinks');
+  navToggle.addEventListener('click', ()=>{
+    navlinks.classList.toggle('open');
+  });
+  navlinks.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click', ()=> navlinks.classList.remove('open'));
+  });
+</script>
+
+</body>
+</html>
